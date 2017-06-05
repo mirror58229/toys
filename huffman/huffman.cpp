@@ -1,12 +1,12 @@
 #include "huffman.h"
-#include <iostream>
-#include <string>
-#include <vector>
-#include <queue>
-#include <cstdlib>
 #include <cassert>
+#include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <iostream>
+#include <queue>
+#include <string>
+#include <vector>
 
 using std::ofstream;
 using std::ifstream;
@@ -16,7 +16,6 @@ using std::queue;
 using std::vector;
 using std::cout;
 using std::endl;
-
 
 huffman_tree::huffman_tree(const string& str) {
     unsigned freq[128];
@@ -39,20 +38,19 @@ huffman_tree::huffman_tree(const string& file, int) {
 }
 
 huffman_tree::~huffman_tree() {
-	safe_free(root);
+    safe_free(root);
     free(buf);
 }
 
 void huffman_tree::safe_free(ht_node* root) {
     if(root->lchild) {
-	    safe_free(root->lchild);
+        safe_free(root->lchild);
     }
     if(root->rchild) {
-	    safe_free(root->rchild);
+        safe_free(root->rchild);
     }
-	root->~ht_node();
+    root->~ht_node();
 }
-
 
 void huffman_tree::build_list() {
     queue<ht_node*> qn;
@@ -74,9 +72,7 @@ void huffman_tree::build_list() {
     }
 }
 
-const string& huffman_tree::getCode(char ch) const {
-    return list[ch];
-}
+const string& huffman_tree::getCode(char ch) const { return list[ch]; }
 
 void huffman_tree::save(const string& filename) const {
     unsigned freq[128];
@@ -90,30 +86,30 @@ void huffman_tree::save(const string& filename) const {
 }
 
 void huffman_tree::build_tree(unsigned* freq) {
-	buf = (ht_node*)malloc(256 * sizeof(ht_node));
-	assert(buf);
-	for(int i = 0; i != 128; ++i) {
-		new(buf + i) ht_node(i, freq[i]);
-	}
-	auto cmp = [](const ht_node* l, const ht_node* r) {
-		return l->frequent > r->frequent;
-	};
+    buf = (ht_node*)malloc(256 * sizeof(ht_node));
+    assert(buf);
+    for(int i = 0; i != 128; ++i) {
+        new(buf + i) ht_node(i, freq[i]);
+    }
+    auto cmp = [](const ht_node* l, const ht_node* r) {
+        return l->frequent > r->frequent;
+    };
 
-	priority_queue<ht_node*, vector<ht_node*>, decltype(cmp)> pq(cmp);
-	for(int i = 0; i != 128; ++i) {
-		pq.push(buf + i);
-	}
+    priority_queue<ht_node*, vector<ht_node*>, decltype(cmp)> pq(cmp);
+    for(int i = 0; i != 128; ++i) {
+        pq.push(buf + i);
+    }
 
-	int cnt = 128;
-	while(pq.size() > 1) {
-		auto l = pq.top();
-		pq.pop();
-		auto r = pq.top();
-		pq.pop();
-		root = new(buf + cnt) ht_node(-1, l->frequent + r->frequent, l, r);
-		pq.push(root);
-		++cnt;
-	}
+    int cnt = 128;
+    while(pq.size() > 1) {
+        auto l = pq.top();
+        pq.pop();
+        auto r = pq.top();
+        pq.pop();
+        root = new(buf + cnt) ht_node(-1, l->frequent + r->frequent, l, r);
+        pq.push(root);
+        ++cnt;
+    }
 }
 
 /* int main() { */
