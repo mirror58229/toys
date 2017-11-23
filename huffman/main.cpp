@@ -1,5 +1,6 @@
 #include "compress.h"
 #include "huffman.h"
+#include <cstdio>
 
 using namespace std;
 
